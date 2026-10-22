@@ -12,6 +12,25 @@ Files go to `~/Downloads/Videos/<channel>/<title> [<id>].mp4`.
 **Always put the URL in quotes.** zsh treats `?` and `&` as special characters
 and will mangle an unquoted YouTube link.
 
+## Install
+
+You need Python 3.9 or newer and ffmpeg. On a Mac with
+[Homebrew](https://brew.sh):
+
+```sh
+brew install ffmpeg pipx
+pipx ensurepath          # then open a new Terminal window
+pipx install git+https://github.com/redwoodjiujitsu/video-dl.git
+```
+
+On Windows or Linux, install Python, ffmpeg and
+[pipx](https://pipx.pypa.io) your usual way, then run the same
+`pipx install` line. To get the latest fixes later:
+
+```sh
+pipx upgrade vdl
+```
+
 ## Common uses
 
 | What you want | Command |
@@ -67,26 +86,27 @@ a hint for each problem at the end. It exits with status 1 if anything failed.
 - **"Sign in to confirm you're not a bot" / age-restricted:** add
   `--cookies-from-browser chrome`.
 - **Downloads suddenly break on a site that used to work:** sites change their
-  players often. Update yt-dlp first:
+  players often. Update vdl and yt-dlp:
   ```sh
-  ~/Downloads/video-dl/.venv/bin/pip install -U "yt-dlp[default]"
+  pipx upgrade vdl
+  pipx runpip vdl install -U "yt-dlp[default]"
   ```
 - **Anything else:** rerun with `-v` to see every step yt-dlp takes.
 
 Pressing Ctrl-C stops cleanly. Partial downloads are kept in `.partial` and
 resume on the next run.
 
-## Setup
+## Working on the code
 
-Requires Python 3.9+ and ffmpeg (`brew install ffmpeg`). YouTube also needs a
-JavaScript runtime; deno is installed from PyPI as a dependency (Homebrew
-can't build it on macOS 13).
+Requires Python 3.9+ and ffmpeg. YouTube also needs a JavaScript runtime;
+deno is installed from PyPI as a dependency (Homebrew can't build it on
+macOS 13).
 
 ```sh
-cd ~/Downloads/video-dl
+git clone https://github.com/redwoodjiujitsu/video-dl.git
+cd video-dl
 python3 -m venv .venv
 .venv/bin/pip install -e ".[dev]"
-ln -s "$PWD/.venv/bin/vdl" /usr/local/bin/vdl
 ```
 
 Tests run without network access:
