@@ -21,6 +21,7 @@ from typing import Iterable, Optional
 from urllib.parse import urlparse
 
 from vdl import __version__
+from vdl.bilibili import BiliBiliIE, clean_url
 from vdl.options import AUDIO_FORMATS, BROWSERS, QUALITIES, DownloadRequest, build_ydl_opts
 
 DEFAULT_OUTPUT = Path.home() / "Downloads" / "Videos"
@@ -112,6 +113,7 @@ def collect_urls(args: argparse.Namespace) -> list[str]:
     urls = list(args.urls)
     if args.batch_file:
         urls += read_batch_file(args.batch_file)
+    urls = [clean_url(u) for u in urls]
     # Drop repeats but keep the order they were given in.
     return list(dict.fromkeys(urls))
 
@@ -327,6 +329,7 @@ def run(argv: Optional[Iterable[str]] = None) -> int:
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
             ydl.add_post_processor(CheckSaved(ydl), when="after_move")
+            ydl.add_info_extractor(BiliBiliIE())
 
             # yt-dlp prints errors itself and, with ignoreerrors, returns None
             # instead of raising; keep the text so the summary can explain it.

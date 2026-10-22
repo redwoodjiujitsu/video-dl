@@ -30,6 +30,9 @@ class FakeYDL:
     def __exit__(self, *exc):
         return False
 
+    def add_info_extractor(self, ie):
+        pass
+
     def add_post_processor(self, pp, when="post_process"):
         assert when == "after_move"
         self.post_processors.append(pp)
@@ -115,6 +118,14 @@ def test_batch_file_skips_comments_and_dedupes(tmp_path):
     batch.write_text(f"﻿# my list\n{YT}\n\n  {BILI}  \n{YT}\n", encoding="utf-8")
     args = cli.build_parser().parse_args([YT, "-a", str(batch)])
     assert cli.collect_urls(args) == [YT, BILI]
+
+
+def test_bilibili_links_are_cleaned_before_use():
+    args = cli.build_parser().parse_args([
+        "https://www.bilibili.com/zh-Hans/video/BV1Rso6B2E25/?spm_id_from=333.1387",
+        "https://www.bilibili.com/video/BV1Rso6B2E25/",
+    ])
+    assert cli.collect_urls(args) == ["https://www.bilibili.com/video/BV1Rso6B2E25/"]
 
 
 def test_missing_ffmpeg_stops_before_download(tmp_path, monkeypatch, capsys):

@@ -37,6 +37,14 @@ Logged-out viewers get lower quality, and some videos only give them a
 video's length and reports a preview as `FAILED` rather than letting it look
 like a success.
 
+vdl also handles two Bilibili problems that yt-dlp doesn't yet (October 2026):
+
+- Links with a language in them (`/zh-Hans/video/BV...`) are rewritten to the
+  plain `/video/BV...` form, and click-tracking parameters are dropped.
+- When Bilibili sends a page with the video data stripped out ("Unable to
+  extract initial state"), vdl gets the same data from Bilibili's API. Run
+  with `-v` to see when this happens.
+
 To get full videos and full quality, log in to bilibili.com in your browser,
 then:
 
@@ -53,9 +61,9 @@ vdl keeps going when one link fails, retries sites that briefly refuse
 requests (Bilibili's HTTP 412, YouTube's 429), and prints a `FAILED` line with
 a hint for each problem at the end. It exits with status 1 if anything failed.
 
-- **Proxy errors:** this Mac's system HTTP proxy points at `195.189.62.7:80`,
-  which doesn't respond. Until it's removed in System Settings > Network >
-  (your network) > Details > Proxies, add `--proxy ""` to connect directly.
+- **Proxy errors:** if a system proxy in System Settings > Network >
+  (your network) > Details > Proxies stops responding, add `--proxy ""` to
+  connect directly.
 - **"Sign in to confirm you're not a bot" / age-restricted:** add
   `--cookies-from-browser chrome`.
 - **Downloads suddenly break on a site that used to work:** sites change their
