@@ -94,6 +94,11 @@ def build_ydl_opts(req: DownloadRequest) -> dict[str, Any]:
         "fragment_retries": 10,
         "continuedl": True,
         "concurrent_fragment_downloads": 4,
+        # Fetch plain files in 10 MB ranges. Since November 2026 Bilibili's
+        # CDN refuses a request for a whole file (403/567) but serves the
+        # same file in byte ranges. Ranged requests also sidestep YouTube's
+        # throttling of long single connections, so it applies everywhere.
+        "http_chunk_size": 10 * 1024 * 1024,
         # Keep going past a dead playlist item; failures are counted by the CLI.
         "ignoreerrors": "only_download",
         "simulate": req.simulate,

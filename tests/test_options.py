@@ -144,3 +144,9 @@ def test_templates_are_valid_for_yt_dlp():
     assert listed.startswith("List/007 - ")
     # The slash in the title must not create an extra folder.
     assert single.count("/") == 1
+
+
+def test_downloads_are_fetched_in_byte_ranges(tmp_path):
+    # Bilibili's CDN answers 403/567 to a whole-file request (Nov 2026).
+    opts = build_ydl_opts(DownloadRequest(output_dir=tmp_path))
+    assert opts["http_chunk_size"] == 10 * 1024 * 1024
